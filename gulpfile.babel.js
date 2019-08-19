@@ -112,6 +112,14 @@ const serve = gulp.series(gulp.parallel(compileSass, compileFonts, transpile), (
                             "!public/**/*.png",
                             "views/**/*.*"
                         ],
+                        snippetOptions: {
+                            rule: {
+                                match: /<\/body>/i,
+                                fn: function (snippet, match) {
+                                    return snippet + match;
+                                }
+                            }
+                        },
                         browser: "google chrome",
                         port: 8855
                     });
