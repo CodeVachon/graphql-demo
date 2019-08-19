@@ -1,0 +1,16 @@
+files:
+  include: '**/*.scss'
+options:
+  formatter: stylish
+  merge-default-rules: false
+rules:
+  hex-notation:
+    - 1
+    - style: lowercase
+  indentation:
+    - 1
+    - size: 4
+  no-important: 1
+  no-invalid-hex: 1
+  trailing-semicolon: 1
+  url-quotes: 1

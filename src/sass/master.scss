@@ -1,0 +1,21 @@
+@import "bootstrap";
+@import "toastr";
+
+.with-commas {
+    li {
+        &:after {
+            display: inline-block;
+            content: ", "
+        }
+        &:first-child,
+        &:last-child {
+            &:after {
+                display: none;
+            }
+        }
+    }
+}
+
+.book-list-item {
+    border-bottom: 1px rgba(0, 0, 0, 0.125) solid;
+}
