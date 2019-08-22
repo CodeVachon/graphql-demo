@@ -17,72 +17,95 @@ const BookList = ({ match }) => {
     const [ genras, setGenras ] = useState(false);
 
     useEffect(() => {
-        if (match.params.hasOwnProperty("tagId")) {
-            axios({
-                method: "GET",
-                url: `/rest/tags/${match.params.tagId}`
-            }).then(response => response.data).then(recordSet => {
-                setTitle(`Tag: ${recordSet.name}`);
-            });
-            axios({
-                method: "GET",
-                url: `/rest/tags/${match.params.tagId}/books`
-            }).then(response => response.data).then(recordSet => {
-                setBookList(recordSet);
-            });
-        } else if (match.params.hasOwnProperty("authorId")) {
-            axios({
-                method: "GET",
-                url: `/rest/authors/${match.params.authorId}`
-            }).then(response => response.data).then(recordSet => {
-                setTitle(`Author: ${recordSet.name}`);
-            });
-            axios({
-                method: "GET",
-                url: `/rest/authors/${match.params.authorId}/books`
-            }).then(response => response.data).then(recordSet => {
-                setBookList(recordSet);
-            });
-        } else if (match.params.hasOwnProperty("genraId")) {
-            axios({
-                method: "GET",
-                url: `/rest/genras/${match.params.genraId}`
-            }).then(response => response.data).then(recordSet => {
-                setTitle(`Genra: ${recordSet.name}`);
-            });
-            axios({
-                method: "GET",
-                url: `/rest/genras/${match.params.genraId}/books`
-            }).then(response => response.data).then(recordSet => {
-                setBookList(recordSet);
-            });
-        } else {
-            // Get All Books
-            axios({
-                method: "GET",
-                url: "/rest/books"
-            }).then(response => response.data).then(recordSet => {
-                setBookList(recordSet);
-            });
-        }
+        let BooksQraphQLBody = `
+            books {
+                id
+                title
+                deck
+                coverImage
+                authors {
+                    id
+                    name
+                }
+                genras {
+                    id
+                    name
+                }
+                tags {
+                    id
+                    name
+                }
+            }
+        `;
+        let SidebarQraphQLBody = `
+            authors {
+                id
+                name
+            }
+            genras {
+                id
+                name
+            }
+            tags {
+                id
+                name
+            }
+        `;
 
-        axios({
-            method: "GET",
-            url: "/rest/authors"
-        }).then(response => response.data).then(recordSet => {
-            setAuthors(recordSet);
-        });
-        axios({
-            method: "GET",
-            url: "/rest/tags"
-        }).then(response => response.data).then(recordSet => {
-            setTags(recordSet);
-        });
-        axios({
-            method: "GET",
-            url: "/rest/genras"
-        }).then(response => response.data).then(recordSet => {
-            setGenras(recordSet);
+        new Promise((resolve, reject) => {
+            let booksFoundUnderKey;
+
+            if (match.params.hasOwnProperty("authorId")) {
+                BooksQraphQLBody = `author(id: "${match.params.authorId}") { name ${BooksQraphQLBody} }`;
+                booksFoundUnderKey = "author";
+            } else if (match.params.hasOwnProperty("genraId")) {
+                BooksQraphQLBody = `genra(id: "${match.params.genraId}") { name ${BooksQraphQLBody} }`;
+                booksFoundUnderKey = "genra";
+            } else if (match.params.hasOwnProperty("tagId")) {
+                BooksQraphQLBody = `tag(id: "${match.params.tagId}") { name ${BooksQraphQLBody} }`;
+                booksFoundUnderKey = "tag";
+            }
+
+
+            axios({
+                method: "POST",
+                url: "/graphQL",
+                data: {
+                    query: `{ ${BooksQraphQLBody} ${SidebarQraphQLBody} }`
+                },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                }
+            }).then(response => response.data).then((response) => {
+                const returnData = {
+                    authors: response.data.authors,
+                    genras: response.data.genras,
+                    tags: response.data.tags,
+                    books: null,
+                    title: null
+                };
+
+                if (booksFoundUnderKey) {
+                    returnData.books = response.data[booksFoundUnderKey].books;
+                    returnData.title = booksFoundUnderKey + ": " + response.data[booksFoundUnderKey].name;
+                } else {
+                    returnData.books = response.data.books;
+                }
+                resolve(returnData);
+            }).catch(reject);
+        }).then(({
+            books,
+            authors,
+            genras,
+            tags,
+            title
+        }) => {
+            setBookList(books);
+            setAuthors(authors);
+            setGenras(genras);
+            setTags(tags);
+            setTitle(title);
         });
     }, [match]);
 

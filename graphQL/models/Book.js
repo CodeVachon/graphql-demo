@@ -40,6 +40,14 @@ class Book {
             ))
         );
     } // close tags
+
+    static getList() {
+        return booksService.getList().then(
+            (recordSet) => Promise.all(recordSet.map(
+                (record) => new Book(record.id)
+            ))
+        );
+    } // close getList
 } // close Book
 
 module.exports = Book;

@@ -20,6 +20,14 @@ class Author {
             ))
         );
     } // close books
+
+    static getList() {
+        return authorService.getList().then(
+            (recordSet) => Promise.all(recordSet.map(
+                (record) => new Author(record.id)
+            ))
+        );
+    } // close getList
 } // close Author
 
 module.exports = Author;

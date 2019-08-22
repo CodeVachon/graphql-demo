@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React from "react";
 import { Link } from "react-router-dom";
 
 import Row from "./../Common/Row";
@@ -7,30 +6,9 @@ import Col from "./../Common/Col";
 import Loading from "./../Common/Loading";
 
 const BookSummary = ({ book }) => {
-    const [ aurhors, setAuthors ] = useState(false);
-    const [ tags, setTags ] = useState(false);
-    const [ genras, setGenras ] = useState(false);
-
-    useEffect(() => {
-        axios({
-            method: "GET",
-            url: `/rest/books/${book.id}/authors`
-        }).then(response => response.data).then(recordSet => {
-            setAuthors(recordSet);
-        });
-        axios({
-            method: "GET",
-            url: `/rest/books/${book.id}/tags`
-        }).then(response => response.data).then(recordSet => {
-            setTags(recordSet);
-        });
-        axios({
-            method: "GET",
-            url: `/rest/books/${book.id}/genras`
-        }).then(response => response.data).then(recordSet => {
-            setGenras(recordSet);
-        });
-    }, []);
+    const aurhors = book.authors;
+    const tags = book.tags;
+    const genras = book.genras;
 
     return (
         <Row className="mb-4 book-list-item">

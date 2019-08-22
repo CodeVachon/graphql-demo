@@ -11,7 +11,7 @@ init().then(() => {
     app.use(express.static(__dirname + "/public"));
 
     app.use("/graphql", graphqlHTTP({
-        schema: require("./graphQL/schema"),
+        schema: require("./graphQL/buildSchema"),
         rootValue: require("./graphQL/rootValue"),
         graphiql: true
     }));

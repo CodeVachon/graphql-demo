@@ -20,6 +20,14 @@ class Genra {
             ))
         );
     } // close books
+
+    static getList() {
+        return genrasService.getList().then(
+            (recordSet) => Promise.all(recordSet.map(
+                (record) => new Genra(record.id)
+            ))
+        );
+    } // close getList
 } // close Genra
 
 module.exports = Genra;

@@ -13,29 +13,44 @@ const BookView = ({ match }) => {
     const [ genras, setGenras ] = useState(false);
 
     useEffect(() => {
+        let BooksQraphQLBody = `
+            book(id: "${match.params.bookid}") {
+                id
+                title
+                deck
+                coverImage
+                language
+                publishDate
+                authors {
+                    id
+                    name
+                }
+                genras {
+                    id
+                    name
+                }
+                tags {
+                    id
+                    name
+                }
+            }
+        `;
+
         axios({
-            method: "GET",
-            url: `/rest/books/${match.params.bookid}`
-        }).then(response => response.data).then(recordSet => {
-            setBook(recordSet);
-        });
-        axios({
-            method: "GET",
-            url: `/rest/books/${match.params.bookid}/authors`
-        }).then(response => response.data).then(recordSet => {
-            setAuthors(recordSet);
-        });
-        axios({
-            method: "GET",
-            url: `/rest/books/${match.params.bookid}/tags`
-        }).then(response => response.data).then(recordSet => {
-            setTags(recordSet);
-        });
-        axios({
-            method: "GET",
-            url: `/rest/books/${match.params.bookid}/genras`
-        }).then(response => response.data).then(recordSet => {
-            setGenras(recordSet);
+            method: "POST",
+            url: "/graphQL",
+            data: {
+                query: `{ ${BooksQraphQLBody} }`
+            },
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            }
+        }).then(response => response.data).then((response) => {
+            setBook(response.data.book);
+            setAuthors(response.data.book.authors);
+            setGenras(response.data.book.genras);
+            setTags(response.data.book.tags);
         });
     }, []);
 
