@@ -1,15 +1,5 @@
-Re-Order Demo
-=============
+GraphQL Demo
+============
 
-Showing off how I expecting reordering to work.
+Demo Project for Christopher Vachons [From Rest to GraphQL](https://blog.christophervachon.com/from-rest-to-graphql-part-1) Article.
 
-## Things of interest here
-
-1. OrderBy Updating
-    - (`services/list ->  handleOrderChange()`)
-    - (`services/list ->  service.addItemToList()`)
-    - (`services/list ->  service.editItemInList()`)
-2. Sending Order Updates
-    - (`src/jsx/App/Index -> onDragEnd` -> `PUT:/api/lists/:id/items/:itemId { orderNo: # }`)
-3. react-beautiful-dnd - Atlassians Drag and Drop
-4. Styled Components
